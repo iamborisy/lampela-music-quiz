@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        text-align: center;
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .score {
+        font-size: 48px;
+        font-weight: bold;
+        color: #007bff;
+        margin: 30px 0;
+      }
+      .result-item {
+        margin: 20px 0;
+        padding: 15px;
+        background-color: #f9f9f9;
+        border-radius: 4px;
+        text-align: left;
+        border-left: 4px solid #ccc;
+      }
+      .correct {
+        border-left-color: #28a745;
+        background-color: #f0f8f5;
+      }
+      .incorrect {
+        border-left-color: #dc3545;
+        background-color: #faf5f5;
+      }
+      .result-title {
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      .status {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 3px;
+        font-size: 14px;
+        margin-right: 10px;
+      }
+      .status-correct {
+        background-color: #28a745;
+        color: white;
+      }
+      .status-incorrect {
+        background-color: #dc3545;
+        color: white;
+      }
+      .answer-text {
+        font-size: 14px;
+        color: #666;
+        margin-top: 8px;
+      }
+      a {
+        display: inline-block;
+        padding: 12px 30px;
+        margin-top: 30px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      a:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Lampela Music Quiz</h1>
+      
+      <div class="score">{{ score }} / {{ total }}</div>
+
+      <div style="width: 100%; max-width: 500px;">
+        {% for r in results %}
+          <div class="result-item {% if r.correct %}correct{% else %}incorrect{% endif %}">
+            <div class="result-title">
+              <span class="status {% if r.correct %}status-correct{% else %}status-incorrect{% endif %}">
+                {% if r.correct %}✓ Correct{% else %}✗ Incorrect{% endif %}
+              </span>
+              Question {{ loop.index }}
+            </div>
+            <div class="answer-text">
+              <strong>Your answer:</strong><br>
+              {{ r.user.genre }}, {{ r.user.sub }}, {{ r.user.decade }}
+            </div>
+            {% if not r.correct %}
+              <div class="answer-text">
+                <strong>Correct answer:</strong><br>
+                {{ r.real.genre }}, {{ r.real.subgenre }}, {{ r.real.decade }}
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+
+      <a href="/">Start Again</a>
+    </div>
+  </body>
+</html>

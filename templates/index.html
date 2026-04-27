@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        text-align: center;
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      form {
+        width: 100%;
+        max-width: 500px;
+        margin-top: 20px;
+      }
+      select, input {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 20px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      a {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #28a745;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+      }
+      a:hover {
+        background-color: #218838;
+      }
+      .progress {
+        font-size: 18px;
+        margin: 20px 0;
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Lampela Music Quiz</h1>
+      <div class="progress">Track {{ index }} of {{ total }}</div>
+      <a href="https://music.youtube.com/watch?v={{ track.youtube }}" target="_blank" rel="noopener noreferrer">
+        Слушать на YouTube Music
+      </a>
+      
+      <form action="/submit" method="post">
+        <div>
+          <label for="genre">Genre:</label>
+          <select name="genre" id="genre" required>
+            <option value="">-- Select Genre --</option>
+            {% for g in genres %}
+              <option value="{{ g }}">{{ g }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          <label for="sub">Subgenre:</label>
+          <select name="sub" id="sub" required>
+            <option value="">-- Select Subgenre --</option>
+            {% for s in subgenres %}
+              <option value="{{ s }}">{{ s }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          <label for="decade">Decade:</label>
+          <select name="decade" id="decade" required>
+            <option value="">-- Select Decade --</option>
+            {% for d in decades %}
+              <option value="{{ d }}">{{ d }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+    <script>
+      const items = {{ dependency_data | tojson }};
+      const decadeSelect = document.getElementById('decade');
+      const genreSelect = document.getElementById('genre');
+      const subgenreSelect = document.getElementById('sub');
+
+      function setOptions(select, values, selectedValue, placeholder) {
+        select.innerHTML = `<option value="">${placeholder}</option>`;
+        values.forEach(value => {
+          const option = document.createElement('option');
+          option.value = value;
+          option.text = value;
+          select.appendChild(option);
+        });
+        if (selectedValue && values.includes(selectedValue)) {
+          select.value = selectedValue;
+        }
+      }
+
+      function getAllowedValues(filters) {
+        const filtered = items.filter(item => {
+          return (!filters.genre || item.genre === filters.genre) &&
+            (!filters.sub || item.subgenre === filters.sub) &&
+            (!filters.decade || item.decade === filters.decade);
+        });
+        return {
+          genres: Array.from(new Set(filtered.map(item => item.genre))).sort(),
+          subgenres: Array.from(new Set(filtered.map(item => item.subgenre))).sort(),
+          decades: Array.from(new Set(filtered.map(item => item.decade))).sort(),
+        };
+      }
+
+      function updateAllOptions(changed) {
+        const currentGenre = genreSelect.value;
+        const currentSub = subgenreSelect.value;
+        const currentDecade = decadeSelect.value;
+        const allowed = getAllowedValues({
+          genre: currentGenre,
+          sub: currentSub,
+          decade: currentDecade,
+        });
+
+        setOptions(genreSelect, allowed.genres, currentGenre, '-- Select Genre --');
+        setOptions(subgenreSelect, allowed.subgenres, currentSub, '-- Select Subgenre --');
+        setOptions(decadeSelect, allowed.decades, currentDecade, '-- Select Decade --');
+
+        if (changed === 'sub' && !currentGenre && allowed.genres.length === 1) {
+          genreSelect.value = allowed.genres[0];
+        }
+        if (changed === 'sub' && !currentDecade && allowed.decades.length === 1) {
+          decadeSelect.value = allowed.decades[0];
+        }
+      }
+
+      function syncOptions() {
+        const currentGenre = genreSelect.value;
+        const currentSub = subgenreSelect.value;
+        const currentDecade = decadeSelect.value;
+        const allowed = getAllowedValues({
+          genre: currentGenre || undefined,
+          sub: currentSub || undefined,
+          decade: currentDecade || undefined,
+        });
+
+        if (currentGenre && !allowed.genres.includes(currentGenre)) {
+          genreSelect.value = '';
+        }
+        if (currentSub && !allowed.subgenres.includes(currentSub)) {
+          subgenreSelect.value = '';
+        }
+        if (currentDecade && !allowed.decades.includes(currentDecade)) {
+          decadeSelect.value = '';
+        }
+      }
+
+      function updateFromDecade() {
+        updateAllOptions('decade');
+      }
+
+      function updateFromGenre() {
+        updateAllOptions('genre');
+      }
+
+      function updateFromSubgenre() {
+        updateAllOptions('sub');
+      }
+
+      decadeSelect.addEventListener('change', updateFromDecade);
+      genreSelect.addEventListener('change', updateFromGenre);
+      subgenreSelect.addEventListener('change', updateFromSubgenre);
+
+      document.addEventListener('DOMContentLoaded', () => {
+        updateAllOptions();
+      });
+    </script>
+  </body>
+</html>

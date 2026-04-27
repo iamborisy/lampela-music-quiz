@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        text-align: center;
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .result {
+        margin: 20px 0;
+        padding: 20px;
+        border-radius: 8px;
+        font-size: 18px;
+      }
+      .correct {
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+      }
+      .incorrect {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+      }
+      .answer-details {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #f9f9f9;
+        border-radius: 4px;
+        text-align: left;
+      }
+      .field-row {
+        border-radius: 6px;
+        padding: 12px;
+        margin: 12px 0;
+      }
+      .field-row.correct-field {
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+      }
+      .field-row.incorrect-field {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+      }
+      .field-label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 8px;
+      }
+      .track-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin: 20px 0 10px;
+        padding: 12px 16px;
+        background-color: #f0f0f0;
+        border-radius: 8px;
+      }
+      .answer-row {
+        margin: 10px 0;
+        font-size: 16px;
+      }
+      .label {
+        font-weight: bold;
+        color: #333;
+      }
+      .user-answer {
+        color: #666;
+      }
+      .correct-answer {
+        color: #28a745;
+      }
+      .button-container {
+        margin-top: 30px;
+      }
+      a {
+        display: inline-block;
+        padding: 12px 30px;
+        margin: 10px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      a:hover {
+        background-color: #0056b3;
+      }
+      .progress {
+        font-size: 16px;
+        color: #666;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Lampela Music Quiz</h1>
+      <div class="track-title">Track: {{ result.real.title }}</div>
+      <div class="progress">Question {{ index }} of {{ total }}</div>
+      
+      <div class="result {% if result.correct %}correct{% else %}incorrect{% endif %}">
+        {% if result.correct %}
+          ✓ Correct!
+        {% else %}
+          ✗ Incorrect
+        {% endif %}
+      </div>
+
+      <div class="answer-details">
+        <div class="field-row {% if result.user.genre == result.real.genre %}correct-field{% else %}incorrect-field{% endif %}">
+          <span class="field-label">Genre</span>
+          <div class="user-answer">Your answer: {{ result.user.genre }}</div>
+          {% if result.user.genre != result.real.genre %}
+            <div class="correct-answer">Correct: {{ result.real.genre }}</div>
+          {% endif %}
+        </div>
+
+        <div class="field-row {% if result.user.sub == result.real.subgenre %}correct-field{% else %}incorrect-field{% endif %}">
+          <span class="field-label">Subgenre</span>
+          <div class="user-answer">Your answer: {{ result.user.sub }}</div>
+          {% if result.user.sub != result.real.subgenre %}
+            <div class="correct-answer">Correct: {{ result.real.subgenre }}</div>
+          {% endif %}
+        </div>
+
+        <div class="field-row {% if result.user.decade == result.real.decade %}correct-field{% else %}incorrect-field{% endif %}">
+          <span class="field-label">Decade</span>
+          <div class="user-answer">Your answer: {{ result.user.decade }}</div>
+          {% if result.user.decade != result.real.decade %}
+            <div class="correct-answer">Correct: {{ result.real.decade }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="button-container">
+        {% if index < total %}
+          <a href="/next_question">Next Question</a>
+        {% else %}
+          <a href="/next_question">See Results</a>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>
