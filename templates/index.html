@@ -43,17 +43,31 @@
       button:hover {
         background-color: #0056b3;
       }
-      a {
+      .yt-btn {
         display: inline-block;
         margin-top: 20px;
         padding: 10px 20px;
-        background-color: #28a745;
+        background-color: #ea1d2c;
         color: white;
         text-decoration: none;
         border-radius: 4px;
+        font-weight: bold;
+        transition: background 0.2s;
       }
-      a:hover {
-        background-color: #218838;
+      .yt-btn:hover {
+        background-color: #b31217;
+      }
+      .spotify-btn {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 10px 20px;
+        background-color: #888;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: bold;
+        opacity: 0.7;
+        cursor: not-allowed;
       }
       .progress {
         font-size: 18px;
@@ -66,8 +80,11 @@
     <div class="container">
       <h1>Lampela Music Quiz</h1>
       <div class="progress">Track {{ index }} of {{ total }}</div>
-      <a href="https://music.youtube.com/watch?v={{ track.youtube }}" target="_blank" rel="noopener noreferrer">
-        Слушать на YouTube Music
+      <a class="yt-btn" href="https://music.youtube.com/watch?v={{ track.youtube }}" target="_blank" rel="noopener noreferrer">
+        Listen on YouTube Music
+      </a>
+      <a class="spotify-btn" href="#" tabindex="-1" aria-disabled="true">
+        Listen on Spotify (coming soon)
       </a>
       
       <form action="/submit" method="post">
